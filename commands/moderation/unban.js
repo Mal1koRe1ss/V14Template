@@ -21,9 +21,9 @@ module.exports = {
                 const ban = await interaction.guild.bans.fetch(id).catch(() => null);
                     if (ban) {
                         await interaction.guild.bans.remove(id);
-                        await interaction.followUp(`Removed ban from ID : <@${id}> .`);
+                        await interaction.followUp(`✅ Removed ban from ID : <@${id}> .`);
                     } else {
-                        await interaction.followUp(`There no ban for the ID : ${id}`);
+                        await interaction.followUp(`❌ Theres no ban for the ID : ${id}`);
                     }
             } catch (err) {
                 await interaction.followUp('An error occured...');

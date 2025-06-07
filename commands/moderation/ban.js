@@ -16,15 +16,15 @@ module.exports = {
         await interaction.deferReply();
 
         const user = interaction.options.getUser('user');
-        const reason = interaction.options.getUser('reason');
+        const reason = interaction.options.getString('reason');
 
-        const member = interaction.guild.members.cache.get(user.id);
+        const member = interaction.guild.members.fetch(user.id);
 
         if (member) {
             member.ban({ reason });
-            interaction.followUp(`<@${user.id}> banned, for reason : ${reason}`);
+            interaction.followUp(`✅ <@${user.id}> banned, for reason : ${reason}`);
         } else {
-            await interaction.followUp('User not found.');
+            await interaction.followUp('❌ User not found.');
         }
     }
 };

@@ -25,16 +25,16 @@ module.exports = {
         await interaction.deferReply();
 
         const user = interaction.options.getUser('user');
-        const reason = interaction.options.getUser('reason');
+        const reason = interaction.options.getString('reason');
 
-        const member = interaction.guild.members.cache.get(user.id);
+        const member = interaction.guild.members.fetch(user.id);
         const time = interaction.options.getInteger('time');
 
         if (member) {
             await member.timeout(time * 1000, reason);
-            await interaction.followUp(`<@${user.id}> timed out for time ${time}, for : ${reason}`);
+            await interaction.followUp(`✅ <@${user.id}> timed out for time ${time}, for : ${reason}`);
         } else {
-            await interaction.followUp('User not found.');
+            await interaction.followUp('❌ User not found.');
         }
     }
 };
