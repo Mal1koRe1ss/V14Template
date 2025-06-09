@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, GuildChannel, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, GuildChannel, PermissionsBitField, User } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -17,6 +17,11 @@ module.exports = {
                 .setName('role')
                 .setDescription('Provides information about the server.')
                 .addRoleOption(option => option.setName('role').setDescription('The role to be given information about').setRequired(true))
+        )
+        .addSubcommand(subcommand => subcommand
+            .setName('user')
+            .setDescription('Provides information about the selected user')
+            .addUserOption(option => option.setName('user').setDescription('The user to be given information aobut').setRequired(true))
         ),
     async execute(interaction) {
         try {
@@ -25,6 +30,7 @@ module.exports = {
             const subcommand = interaction.options.getSubcommand();
             const channel = interaction.options.getChannel('channel');
             const role = interaction.options.getRole('role');
+            const user = interaction.options.getUser('user');
             const guild = interaction.guild;
 
             if (!guild) throw new Error(`Can't get guild information`);
@@ -80,13 +86,28 @@ module.exports = {
                 .setTimestamp();
 
                 await interaction.editReply({ embeds: [roleEmbed] });
+            } else if (subcommand === 'user') {
+
+                const userEmbed = new EmbedBuilder()
+                .setColor(0x221b43)
+                .setTitle(`User: ${user.username}`)
+                .setThumbnail(user.avatarURL({ size: 256 }))
+                .addFields(
+                    { name: 'Created', value: `<t:${Math.floor(user.createdAt.getTime()/1000)}:R>`, inline: true },
+                    { name: 'Display Name', value: user.displayName, inline: true },
+                    { name: 'Username', value: user.username, inline: true }
+                )
+                .setFooter({ text: `User ID: ${user.id}` })
+                .setTimestamp();
+
+                await interaction.editReply({ embeds: [userEmbed] });
             }
                 } catch (err) {
                     console.error(`[ERROR] Error in information command : `, err);
                     await interaction.editReply('❌ An error occured!');;
                 }
         } catch (err) {
-            console.error('[ERROR] Server command error :', err);
+            console.error('[ERROR] Error in information command error :', err);
         }
     },
 };
